@@ -13,6 +13,8 @@ import java.util.List;
 public interface SubscriptionRepo extends CrudRepository<Subscription, Integer> {
     public Subscription findByEventAndSubscriber(Event evt, User user);
 
+    List<Subscription> findByEventPrettyName(String prettyName);
+
     @Query(value = "SELECT COUNT(*) AS quantidade, s.indication_user_id, u.user_name " +
             "FROM tbl_subscription s " +
             "INNER JOIN tbl_user u ON s.indication_user_id = u.user_id " +

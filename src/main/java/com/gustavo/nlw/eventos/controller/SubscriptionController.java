@@ -1,6 +1,7 @@
 package com.gustavo.nlw.eventos.controller;
 
 import com.gustavo.nlw.eventos.dto.ErrorMessage;
+import com.gustavo.nlw.eventos.dto.SubscribersResponse;
 import com.gustavo.nlw.eventos.dto.SubscriptionResponse;
 import com.gustavo.nlw.eventos.exception.EventNotFoundException;
 import com.gustavo.nlw.eventos.exception.SubscriptionConflictException;
@@ -37,6 +38,16 @@ public class SubscriptionController {
             return ResponseEntity.badRequest().body(new ErrorMessage("Erro inesperado: " + ex.getMessage()));
         }
     }
+
+    @GetMapping("/subscribers/{prettyName}")
+    public ResponseEntity<List<SubscribersResponse>> getAllSubscribers(@PathVariable String prettyName){
+
+        List<SubscribersResponse> subscriptions = service.getAllSubscribers(prettyName);
+
+        return ResponseEntity.ok(subscriptions);
+
+    }
+
 
     @GetMapping("/subscription/{prettyName}/ranking")
     public ResponseEntity<?> generateRankingByEvent(@PathVariable String prettyName) {

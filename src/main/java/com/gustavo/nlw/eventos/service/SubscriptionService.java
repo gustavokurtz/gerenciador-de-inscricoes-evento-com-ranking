@@ -1,6 +1,7 @@
 package com.gustavo.nlw.eventos.service;
 
 
+import com.gustavo.nlw.eventos.dto.SubscribersResponse;
 import com.gustavo.nlw.eventos.dto.SubscriptionRankingByUser;
 import com.gustavo.nlw.eventos.dto.SubscriptionRankingItem;
 import com.gustavo.nlw.eventos.dto.SubscriptionResponse;
@@ -17,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -33,6 +34,8 @@ public class SubscriptionService {
     private SubscriptionRepo subsRepo;
     @Autowired
     private EventService eventService;
+    @Autowired
+    private EventRepo eventRepo;
 
     public SubscriptionResponse createNewSubscription(String eventName, User user, Integer userId){
         Subscription subscription = new Subscription();
@@ -76,9 +79,21 @@ public class SubscriptionService {
 
         Subscription res = subsRepo.save(subscription);
 
-        return new SubscriptionResponse(res.getSubscriptionNumber(), "http://codecraft.com/subscription/"+res.getEvent().getPrettyName()+"/"+res.getSubscriber().getId());
+        return new SubscriptionResponse(res.getSubscriptionNumber(), "https://revinfinity.pro/subscription/"+res.getEvent().getPrettyName()+"/"+res.getSubscriber().getId());
 
     }
+
+
+    public List<SubscribersResponse> getAllSubscribers(String prettyName) {
+        List<Subscription> subs = (List<Subscription>) subsRepo.findByEventPrettyName(prettyName);
+
+        return subs.stream()
+                .map(sub -> new SubscribersResponse(sub.getSubscriber().getName(), sub.getEvent().getTitle(), sub.getEvent().getPrettyName()))
+                .collect(Collectors.toList());
+    }
+
+
+
 
     public List<SubscriptionRankingItem> getCompleteRanking(String prettyName){
         Event evt = evtRepo.findByPrettyName(prettyName);
